@@ -1,0 +1,275 @@
+<template>
+    <div class="container mobile" v-if="isMobile()">
+        <div class="filter-bar">
+            <SearchFilter v-model="searchText" class="search-mobile"/>
+            <button @click="showFilters = !showFilters">
+                <svg enable-background="new 0 0 32 32" id="Editable-line" version="1.1" viewBox="0 0 32 32" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="  M3.241,7.646L13,19v9l6-4v-5l9.759-11.354C29.315,6.996,28.848,6,27.986,6H4.014C3.152,6,2.685,6.996,3.241,7.646z" fill="none" id="XMLID_6_" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="2"/></svg>
+            </button>
+        </div>
+        <div class="filters" v-if="showFilters">
+            <Multiselect
+                id="location-select"
+                v-model="locationFilter"
+                placeholder="Location"
+                mode="multiple"
+                :close-on-select="false"
+                label="name"
+                :options="locationList"
+                :searchable="true"
+            />
+            <Multiselect
+                id="status-select"
+                v-model="statusFilter"
+                placeholder="Status"
+                :options="statusOptions"
+                :searchable="true"
+            />
+        </div>
+        <div class="list-mobile">
+            <div v-for="item in stock" :key="item.name" :product="item" class="list-item">
+                <span>{{ item.name }}</span>
+                <span class="tag">{{ locationStore.getLocationFromId(item.locationId) }}</span>
+            </div>
+            <p v-if="!stock">No items found.</p>
+        </div>
+    </div>
+    <div class="container" v-else>
+
+        <div class="categories">
+            <span :class="{ 'active-category': locationFilter == 'all' }" @click="locationFilter = 'all'">All locations</span>
+            <span v-for="item in locationList" :key="item.id" :class="{ 'active-category': locationFilter == item.id }" @click="locationFilter = item.id">{{ item.name }}</span>
+        </div>
+        <div class="list-view">
+            <div class="filter-bar">
+                <Multiselect
+                    id="status-select"
+                    v-model="statusFilter"
+                    placeholder="Status"
+                    :options="statusOptions"
+                    :searchable="true"
+                    />
+                <SearchFilter v-model="searchText" />
+            </div>
+            <div class="list-heading">
+                <div class="heading-item">
+                    <h3 class="sort-up" id="name" @click="setSort($event)">Item</h3>
+                </div>
+                <h3 id="location" @click="setSort($event)" class="tag-heading">Location</h3>
+                <h3 id="status" @click="setSort($event)">Status</h3>
+                <h3>Modify</h3>
+            </div>
+            <div class="list">
+                <ListItem v-for="item in stock" :key="item.name" :product="item" />
+            </div>
+        </div>
+
+    </div>
+</template>
+
+<script lang="ts" setup>
+import { ref, computed } from 'vue'
+import Multiselect from '@vueform/multiselect'
+import ListItem from '@/components/common/ListItem.vue';
+import SearchFilter from '@/components/common/SearchFilter.vue';
+import { isMobile } from '@/services/helpers/helpers'
+import { useStock } from '@/stores/stock';
+import { useLocationStore } from '@/stores/locations';
+
+const store = useStock();
+const locationStore = useLocationStore();
+
+const locationFilter = ref('all');
+const statusFilter = ref('');
+const sortUp = ref(true);
+const sortParam = ref('name');
+const searchText = ref(null);
+const showFilters = ref(false);
+
+// these are copied from setStatus in functions/grocy
+const statusOptions = [
+    'In stock',
+    'On shopping list',
+    'Use up in < 5 days',
+    'Use up today',
+    'Expired'
+];
+
+const stock = ref(store.stock);
+const locationList = ref(locationStore.locations);
+
+function setSort(event: Event) {
+
+    if (event.target instanceof Element) { 
+
+        // if parameter changes, set default sort direction, else invert sort direction
+        if (sortParam.value == event.target.id) {
+            sortUp.value = !sortUp.value;
+        } else {
+            sortParam.value = event.target.id;
+            sortUp.value = true;
+        }
+
+        // remove any chevrons
+        const elementsUp = document.getElementsByClassName("sort-up");
+        while (elementsUp.length) {
+            elementsUp[0].classList.remove("sort-up");
+        }
+
+        const elementsDown = document.getElementsByClassName("sort-down");
+        while (elementsDown.length) {
+            elementsDown[0].classList.remove("sort-down");
+        }
+
+        // show chevron on correct element
+        if (sortUp.value == true) {
+            event.target.classList.add("sort-up");
+        } else {
+            event.target.classList.add("sort-down");
+        }
+        
+    }
+    
+}
+
+</script>
+
+<style src="@vueform/multiselect/themes/default.css"></style>
+
+<style scoped>
+
+.categories {
+    margin: 2rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid var(--font-accent);
+}
+
+.categories span {
+    font-family: 'Jost';
+    font-weight: medium;
+    font-size: 120%;
+    color: var(--font-accent);
+    margin-right: 3rem;
+    cursor: pointer;
+}
+
+.active-category {
+    color: var(--font-main) !important;
+    padding-bottom: 2rem;
+    border-bottom: 2px solid var(--font-main);
+}
+
+.filter-bar {
+    padding: 0 2rem;
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+}
+
+.multiselect {
+    max-width: 15rem;
+    margin: 0;
+    height: auto;
+    font-family: 'Inter';
+}
+
+.list-heading {
+    margin: 2rem 0 1rem 0;
+    display: grid;
+    grid-template-rows: 1fr;
+    grid-template-columns: 3fr 1fr 1fr 1fr;
+    padding: 1rem 1rem 1rem 2rem;
+    grid-gap: 4rem;
+    align-items: center;
+}
+
+.list-heading > h3:not(:first-child) {
+    text-align: center
+}
+
+.heading-item {
+    display: flex;
+    flex-direction: row;
+}
+
+#status {
+    text-align: left !important;
+}
+
+.list {
+    border-top: 1px solid var(--font-accent);
+}
+
+.sort-up:after {
+    display: inline-block;
+    content: ' ';
+    background-image: url("data:image/svg+xml,%3C%3Fxml version='1.0' %3F%3E%3Csvg viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3Cstyle%3E.cls-1%7Bfill:none;%7D%3C/style%3E%3C/defs%3E%3Ctitle/%3E%3Cg data-name='Layer 2' id='Layer_2'%3E%3Cpath d='M16,21a1,1,0,0,1-.71-.29l-8-8a1,1,0,1,1,1.42-1.42L16,18.59l7.29-7.3a1,1,0,0,1,1.42,1.42l-8,8A1,1,0,0,1,16,21Z'/%3E%3C/g%3E%3Cg id='frame'%3E%3Crect class='cls-1' height='32' width='32'/%3E%3C/g%3E%3C/svg%3E");
+    background-size: 1.5rem 1.5rem;
+    height: 1.5rem;
+    width: 1.5rem;
+    vertical-align: middle;
+    margin-left: 1rem;
+}
+
+.sort-down:after {
+    display: inline-block;
+    content: ' ';
+    background-image: url("data:image/svg+xml,%3C%3Fxml version='1.0' %3F%3E%3Csvg viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3Cstyle%3E.cls-1%7Bfill:none;%7D%3C/style%3E%3C/defs%3E%3Ctitle/%3E%3Cg data-name='Layer 2' id='Layer_2'%3E%3Cpath d='M24,21a1,1,0,0,1-.71-.29L16,13.41l-7.29,7.3a1,1,0,1,1-1.42-1.42l8-8a1,1,0,0,1,1.42,0l8,8a1,1,0,0,1,0,1.42A1,1,0,0,1,24,21Z'/%3E%3C/g%3E%3Cg id='frame'%3E%3Crect class='cls-1' height='32' width='32'/%3E%3C/g%3E%3C/svg%3E");
+    background-size: 1.5rem 1.5rem;
+    height: 1.5rem;
+    width: 1.5rem;
+    vertical-align: middle;
+    margin-left: 1rem;
+}
+
+/* MOBILE CSS */
+
+.mobile .filter-bar {
+    justify-content: space-between;
+    max-width: 100%;
+}
+
+.mobile .filter-bar button {
+    background-color: transparent;
+} 
+
+.mobile .filter-bar svg {
+    height: 1rem;
+    width: 1rem;
+}
+
+.search-mobile {
+    font-size: 80%;
+}
+
+.filters {
+    display: flex;
+    margin: 1rem 2rem;
+    gap: 1rem;
+}
+
+.filters .multiselect {
+    max-width: 8rem;
+    font-size: 80%;
+}
+
+.list-mobile {
+    padding: 1rem 2rem;
+}
+
+.mobile .list-item {
+    font-family: Inter;
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--font-accent);
+    display: flex;
+    justify-content: space-between;
+}
+
+.tag {
+    font-size: 60%;
+    text-transform: uppercase;
+    background-color: var(--accent-primary);
+    padding: 0.2rem 0.5rem;
+    border-radius: 0.2rem;
+}
+
+</style>

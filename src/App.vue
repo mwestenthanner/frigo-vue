@@ -1,0 +1,61 @@
+<template>
+  <div class="app">
+    <Sidebar class="desktop" />
+    <main>
+      <HeaderBar />
+      <router-view />
+    </main>
+    <MobileNav class="mobile"></MobileNav>
+  </div>
+</template>
+
+<script lang="ts" setup>
+import Sidebar from './components/common/Sidebar.vue'; 
+import HeaderBar from './components/common/HeaderBar.vue';
+import { onBeforeMount, computed } from 'vue';
+import MobileNav from './components/common/MobileNav.vue'
+
+import { useLocationStore } from '@/stores/locations';
+import { useStock } from '@/stores/stock';
+
+const locations = useLocationStore();
+const stock = useStock();
+
+onBeforeMount(async () => {
+  await locations.setLocations();
+  await stock.setProducts();
+
+  const location = computed(()=> locations.getLocationFromName("Speisekammer"));
+  console.log(location.value)
+})
+</script>
+
+<style>
+
+/* Phone */
+@media screen and (max-width: 599px) {
+  .mobile {
+    display: block;
+  }
+
+  .desktop {
+    display: none !important;
+  }
+}
+
+@media(min-width: 600px) {
+  .app {
+    display: grid;
+    grid-template-columns: 15% 1fr;
+  }
+
+  .mobile {
+    display: none !important;
+  }
+
+  .desktop {
+    display: block;
+  }
+}
+
+</style>

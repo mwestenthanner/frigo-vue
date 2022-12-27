@@ -1,0 +1,203 @@
+/* --- FONT IMPORTS --- */
+
+@font-face {
+    font-family: "Jost";
+    src: local("Jost"),
+     url('./fonts/jost_regular.ttf') format("truetype");
+     font-weight: normal;
+     font-style: normal;
+}
+
+@font-face {
+    font-family: "Jost";
+    src: local("Jost"),
+     url('./fonts/jost_medium.ttf') format("truetype");
+    font-weight: medium;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "Jost";
+    src: local("Jost"),
+     url('./fonts/jost_bold.ttf') format("truetype");
+    font-weight: bold;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "Inter";
+    src: local("Inter"),
+     url('./fonts/Inter-Regular.ttf') format("truetype");
+     font-weight: normal;
+     font-style: normal;
+}
+
+@font-face {
+    font-family: "Inter";
+    src: local("Inter"),
+     url('./fonts/Inter-Medium.ttf') format("truetype");
+    font-weight: medium;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "Inter";
+    src: local("Inter"),
+     url('./fonts/Inter-Bold.ttf') format("truetype");
+    font-weight: bold;
+    font-style: normal;
+}
+
+
+/* --- COLOR VARIABLES --- */
+:root {
+    --light-green: rgba(105,145,110,255);
+    --lighter-green: rgba(174,195,177,255);
+    --dark-green: rgba(12,56,43,255);
+    --yellow: rgba(245,178,2,255);
+    --brown: rgba(180,133,79,255);
+    --green-grey: rgba(174,195,177,255);
+    --white: #fff;
+
+    
+    --font-main: #434343;
+    --font-accent: #BEBEBE;
+    --background: #fff;
+    --accent-primary: #FDD5C5;
+    --accent-secondary: #628676;
+
+
+/* vueform multiselect */
+    --ms-border-color: var(--font-accent);
+    --ms-border-width: 1px;
+    --ms-radius: 0.5rem;
+    --ms-option-bg-selected: var(--accent-primary);
+    --ms-option-color-selected: var(--font-main);
+    --ms-option-bg-selected-pointed: var(--accent-primary);
+    --ms-option-color-selected-pointed: var(--font-main);    
+    --ms-ring-color: transparent;    
+    --ms-placeholder-color: var(--font-accent); 
+}
+
+/* --- STYLING RESETS --- */
+* {
+    margin: 0;
+    padding: 0;
+}
+
+/* --- TEXT STYLING --- */
+body {
+    color: var(--dark-green);
+}
+
+p, a, span, ul, li {
+    font-family: "Inter", sans-serif;
+    font-weight: normal;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: "Jost", sans-serif;
+    font-weight: bold;
+}
+
+/* --- GLOBAL STYLES --- */
+
+.search-filter-add {
+    margin-top: 2rem;
+    display: grid;
+    grid-template-columns: 5fr 1fr;
+    grid-template-rows: 1fr;
+  }
+
+button {
+    font-family: Inter;
+    color: var(--font-main);
+    padding: 0.7rem;
+    border-radius: 10px;
+    background-color: var(--accent-primary);
+    border: none;
+    cursor: pointer;
+}
+
+select {
+    padding: 1rem;
+    border-radius: 0.5rem;
+    font-family: Inter;
+    border: 1px solid var(--font-accent);
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 1em;
+}
+
+input[type=text], input[type=date] {
+    font-family: Inter;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    border: 1px solid var(--font-accent);
+}
+
+label {
+    font-family: Inter;
+    color: var(--font-main);
+}
+
+.multiselect {
+    height: 3rem;
+}
+
+.multiselect-search {
+    border: none !important;
+}
+
+.filter-bar .multiselect-placeholder::before {
+    background-image: url("data:image/svg+xml,%3Csvg enable-background='new 0 0 32 32' id='Editable-line' version='1.1' viewBox='0 0 32 32' xml:space='preserve' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'%3E%3Cpath d=' M3.241,7.646L13,19v9l6-4v-5l9.759-11.354C29.315,6.996,28.848,6,27.986,6H4.014C3.152,6,2.685,6.996,3.241,7.646z' fill='none' id='XMLID_6_' stroke='%23BEBEBE' stroke-linecap='round' stroke-linejoin='round' stroke-miterlimit='10' stroke-width='2'/%3E%3C/svg%3E");
+    content: ' ';
+    height: 1.2rem;
+    width: 1.2rem;
+    vertical-align: middle;
+    background-size: 1.2rem;
+    margin-right: 0.5rem;
+}
+
+.mobile .filter-bar .multiselect-placeholder::before {
+    background-image: none;
+    content: '';
+    height: 0;
+    width: 0;
+    vertical-align: middle;
+    background-size: 0;
+    margin-right: 0;
+}
+
+.filter-bar .multiselect-search {
+    width: 85%;
+    margin-left: 15%;
+}
+
+#modal-overlay {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    background-color: #000000b0;
+    align-items: center;
+    z-index: 10;
+}
+
+#modal {
+    background-color: var(--background);
+    width: 40vw;
+    padding: 3rem;
+    border-radius: 1rem;
+}
+
+.mobile #modal {
+    width: 70vw;
+    padding: 2rem;
+}
+
