@@ -2,7 +2,7 @@
     <div class="list-item">
         <p>{{ props.product.name }}</p>
         <p class="tag">{{ locationStore.getLocationFromId(props.product.locationId)?.name }}</p>
-        <p class="status" :class="{ expiring : isExpiring, expired : isExpired }">{{ setClass(product) }}</p>
+        <p class="status">{{ setStatus(product) }}</p>
         <Controls :product="props.product" />
 
     </div>
@@ -10,49 +10,17 @@
 </template>
 
 <script lang="ts" setup>
+import { setStatus } from '@/services/helpers/helpers';
 import { useLocationStore } from '@/stores/locations';
 import { defineProps, ref } from 'vue'
 import type { Product } from '../../types'
 import Controls from './Controls.vue';
-
-const isExpired = ref(false);
-const isExpiring = ref(false);
 
 const locationStore = useLocationStore();
 
 const props = defineProps<{
   product: Product
 }>()
-    
-function calculateExpiry (expiry: Date | null) {
-    if (!expiry) {
-        return null;
-    } else {
-        const dateToday = new Date;
-
-        const diffTime = expiry.valueOf() - dateToday.valueOf();
-        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
-
-        return diffDays;
-    }
-}
-
-function setClass(product: Product) {
-    const expiry = calculateExpiry(product.useUp);
-
-    switch (true) {
-        case (expiry && expiry < 5 && expiry > 0 || expiry && expiry == 0):
-            isExpiring.value = true;
-            break;
-        case (expiry && expiry > 0):
-            isExpired.value = true;
-            break;
-        default: 
-            break;
-    }
-
-    return product.status;
-}
 
     
 </script>

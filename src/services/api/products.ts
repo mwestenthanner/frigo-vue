@@ -20,7 +20,7 @@ async function getProducts(query?: {
             inStock: item.inStock,
             quantity: item.quantity || null,
             unit: item.unit,
-            useUp: item.useUp || null,
+            useUp: item.useUp ? new Date(item.useUp) : null,
             alwaysInStock: item.alwaysInStock || false,
             onShoppingList: item.onShoppingList || false,
             quantityOnShoppingList: item.quantityOnShoppingList || null,
@@ -39,7 +39,7 @@ async function getProductsInStock() {
             inStock: item.inStock,
             quantity: item.quantity || null,
             unit: item.unit,
-            useUp: item.useUp || null,
+            useUp: item.useUp ? new Date(item.useUp) : null,
             alwaysInStock: item.alwaysInStock || false,
             onShoppingList: item.onShoppingList || false,
             quantityOnShoppingList: item.quantityOnShoppingList || null,
@@ -64,8 +64,23 @@ async function addProduct(product: { name: string; locationId: string; inStock: 
     return response.data._id;
   }
 
-async function updateProduct(itemId: string) {
-    await axios.delete(apiUrl + itemId);
+async function updateProduct(itemId: string, updateObj: Object) {
+    const response = await axios.put(apiUrl + itemId, updateObj);
+    return response.data.map((item: { _id: string; name: string; locationId: string; inStock: boolean; unit: string; quantity?: number;  useUp?: Date; alwaysInStock?: boolean; onShoppingList?: boolean; quantityOnShoppingList?: number; notes?: string; }) => {
+        return {
+            id: item._id,
+            name: item.name,
+            locationId: item.locationId,
+            inStock: item.inStock,
+            quantity: item.quantity || null,
+            unit: item.unit,
+            useUp: item.useUp ? new Date(item.useUp) : null,
+            alwaysInStock: item.alwaysInStock || false,
+            onShoppingList: item.onShoppingList || false,
+            quantityOnShoppingList: item.quantityOnShoppingList || null,
+            notes: item.notes || null
+        }
+    });
 }
 
 async function removeProduct(itemId: string) {
@@ -76,5 +91,6 @@ export {
     getProducts,
     getProductsInStock,
     addProduct,
+    updateProduct,
     removeProduct
 }
