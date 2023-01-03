@@ -36,8 +36,8 @@
     <div class="container" v-else>
 
         <div class="categories">
-            <router-link to="/groceries"><span>All locations</span></router-link>
-            <router-link v-for="item in locations" :key="item.id" :to="'/groceries?locationId=' + item.id"><span>{{ item.name }}</span></router-link>
+            <router-link to="/groceries" @click="locationFilter = ''"><span :class="{ 'active-category': locationFilter == '' }">All locations</span></router-link>
+            <router-link v-for="item in locations" :key="item.id" :to="'/groceries?locationId=' + item.id" @click="locationFilter = item.id"><span :class="{ 'active-category': locationFilter == item.id }">{{ item.name }}</span></router-link>
         </div>
         <div class="list-view">
             <div class="filter-bar">
@@ -80,7 +80,7 @@ import { storeToRefs } from 'pinia'
 const store = useStock();
 const locationStore = useLocationStore();
 
-const locationFilter = ref('all');
+const locationFilter = ref('');
 const statusFilter = ref('');
 const sortUp = ref(true);
 const sortParam = ref('name');
@@ -155,13 +155,16 @@ function setSort(event: Event) {
     border-bottom: 1px solid var(--font-accent);
 }
 
+.categories a {
+    text-decoration: none;
+}
+
 .categories span {
     font-family: 'Jost';
-    font-weight: medium;
+    font-weight: 500;
     font-size: 120%;
     color: var(--font-accent);
     margin-right: 3rem;
-    cursor: pointer;
 }
 
 .active-category {
