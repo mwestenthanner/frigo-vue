@@ -29,8 +29,15 @@ async function getProducts(query?: {
     });
 }
 
-async function getProductsInStock() {
-    const response = await axios.get(apiUrl + 'stock');
+async function getProductsInStock(query?: { 
+    page?: number, 
+    limit?: number, 
+    q?: string,
+    locationId?: string,
+    quantity?: number, 
+    onShoppingList?: boolean,
+}) {
+    const response = await axios.get(apiUrl + 'stock', { params: query });
     return response.data.map((item: { _id: string; name: string; locationId: string; inStock: boolean; unit: string; quantity?: number;  useUp?: Date; alwaysInStock?: boolean; onShoppingList?: boolean; quantityOnShoppingList?: number; notes?: string; }) => {
         return {
             id: item._id,

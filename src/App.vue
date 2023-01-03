@@ -24,9 +24,6 @@ const stock = useStock();
 onBeforeMount(async () => {
   await locations.setLocations();
   await stock.setProducts();
-
-  const location = computed(()=> locations.getLocationFromName("Speisekammer"));
-  console.log(location.value)
 })
 </script>
 

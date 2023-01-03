@@ -14,7 +14,7 @@
                 mode="multiple"
                 :close-on-select="false"
                 label="name"
-                :options="locationList"
+                :options="locations"
                 :searchable="true"
             />
             <Multiselect
@@ -36,8 +36,8 @@
     <div class="container" v-else>
 
         <div class="categories">
-            <span :class="{ 'active-category': locationFilter == 'all' }" @click="locationFilter = 'all'">All locations</span>
-            <span v-for="item in locationList" :key="item.id" :class="{ 'active-category': locationFilter == item.id }" @click="locationFilter = item.id">{{ item.name }}</span>
+            <router-link to="/groceries"><span>All locations</span></router-link>
+            <router-link v-for="item in locations" :key="item.id" :to="'/groceries?locationId=' + item.id"><span>{{ item.name }}</span></router-link>
         </div>
         <div class="list-view">
             <div class="filter-bar">
@@ -74,6 +74,8 @@ import SearchFilter from '@/components/common/SearchFilter.vue';
 import { isMobile } from '@/services/helpers/helpers'
 import { useStock } from '@/stores/stock';
 import { useLocationStore } from '@/stores/locations';
+import { useRoute, onBeforeRouteUpdate } from 'vue-router';
+import { storeToRefs } from 'pinia'
 
 const store = useStock();
 const locationStore = useLocationStore();
@@ -94,8 +96,18 @@ const statusOptions = [
     'Expired'
 ];
 
-const stock = ref(store.stock);
-const locationList = ref(locationStore.locations);
+const { stock } = storeToRefs(store);
+const { locations } = storeToRefs(locationStore);
+const route = useRoute();
+
+onBeforeRouteUpdate(async (to, from) => {
+    console.log('update')
+    const locId = to.query.locationId;
+
+    if (locId) {
+        await store.setProducts({ locationId: locId });
+    } else await store.setProducts()
+})
 
 function setSort(event: Event) {
 

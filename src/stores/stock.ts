@@ -17,8 +17,8 @@ export const useStock = defineStore('stock', () => {
   }
 
   // Actions
-  async function setProducts() {
-    stock.value = await getProductsInStock();
+  async function setProducts(query?: Object) {
+    stock.value = await getProductsInStock(query);
   }
 
   function addProduct(product: Product) {
