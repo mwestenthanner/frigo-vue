@@ -23,7 +23,6 @@ const stock = useStock();
 
 onBeforeMount(async () => {
   await locations.setLocations();
-  await stock.setProducts();
 })
 </script>
 

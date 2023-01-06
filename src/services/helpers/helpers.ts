@@ -1,5 +1,44 @@
 import type { Product } from '@/types'
 
+export const statusObjects = [
+    {
+        value: 'inStock',
+        label: 'In stock',
+        query: {
+            inStock: true
+        }
+    },
+    {
+        value: 'onShoppingList',
+        label: 'On shopping list',
+        query: {
+            onShoppingList: true
+        }
+    },
+    {
+        value: 'closeToExpiry',
+        label: 'Use up in about 5 days',
+        query: {
+            useUp: ''
+        }
+    },
+    {
+        value: 'expiresToday',
+        label: 'Use up today',
+        query: {
+            useUp: ''
+        }
+    },
+    {
+        value: 'expired',
+        label: 'Expired',
+        query: {
+            useUp: ''
+        }
+    },
+]
+
+
 export function isMobile() {
     if( screen.width <= 760 ) {
         return true;

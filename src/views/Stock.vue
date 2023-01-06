@@ -14,15 +14,22 @@
                 mode="multiple"
                 :close-on-select="false"
                 label="name"
+                :object="true"
                 :options="locations"
                 :searchable="true"
+                @select="navigate('locationId', locationFilter)"
+                @clear="navigate('locationId')"
             />
             <Multiselect
-                id="status-select"
+            id="status-select"
                 v-model="statusFilter"
                 placeholder="Status"
-                :options="statusOptions"
+                label="label"
+                :object="true"
+                :options="statusObjects"
                 :searchable="true"
+                @select="navigate('status', statusFilter.value)"
+                @clear="navigate('status');"
             />
         </div>
         <div class="list-mobile">
@@ -36,8 +43,8 @@
     <div class="container" v-else>
 
         <div class="categories">
-            <router-link to="/groceries" @click="locationFilter = ''"><span :class="{ 'active-category': locationFilter == '' }">All locations</span></router-link>
-            <router-link v-for="item in locations" :key="item.id" :to="'/groceries?locationId=' + item.id" @click="locationFilter = item.id"><span :class="{ 'active-category': locationFilter == item.id }">{{ item.name }}</span></router-link>
+            <span :class="{ 'active-category': locationFilter == '' }" @click="locationFilter = ''; navigate('locationId')">All locations</span>
+            <span v-for="item in locations" :key="item.id" @click="locationFilter = item.id; navigate('locationId', item.id)" :class="{ 'active-category': locationFilter == item.id }">{{ item.name }}</span>
         </div>
         <div class="list-view">
             <div class="filter-bar">
@@ -45,9 +52,13 @@
                     id="status-select"
                     v-model="statusFilter"
                     placeholder="Status"
-                    :options="statusOptions"
+                    label="label"
+                    :object="true"
+                    :options="statusObjects"
                     :searchable="true"
-                    />
+                    @select="navigate('status', statusFilter.value)"
+                    @clear="navigate('status');"
+                />
                 <SearchFilter v-model="searchText" />
             </div>
             <div class="list-heading">
@@ -60,6 +71,7 @@
             </div>
             <div class="list">
                 <ListItem v-for="item in stock" :key="item.name" :product="item" />
+                <p v-if="!stock" class="error-msg">Keine Einträge gefunden. Ändere deine Suchkriterien oder lege neue Einträge an.</p>
             </div>
         </div>
 
@@ -67,46 +79,39 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, computed } from 'vue'
+import { ref, onBeforeMount } from 'vue'
 import Multiselect from '@vueform/multiselect'
 import ListItem from '@/components/common/ListItem.vue';
 import SearchFilter from '@/components/common/SearchFilter.vue';
-import { isMobile } from '@/services/helpers/helpers'
+import { isMobile, statusObjects } from '@/services/helpers/helpers'
 import { useStock } from '@/stores/stock';
 import { useLocationStore } from '@/stores/locations';
-import { useRoute, onBeforeRouteUpdate } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import { storeToRefs } from 'pinia'
 
 const store = useStock();
 const locationStore = useLocationStore();
 
+const router = useRouter();
+const route = useRoute();
+
 const locationFilter = ref('');
-const statusFilter = ref('');
+const statusFilter = ref();
 const sortUp = ref(true);
 const sortParam = ref('name');
 const searchText = ref(null);
 const showFilters = ref(false);
 
-// these are copied from setStatus in functions/grocy
-const statusOptions = [
-    'In stock',
-    'On shopping list',
-    'Use up in < 5 days',
-    'Use up today',
-    'Expired'
-];
-
 const { stock } = storeToRefs(store);
 const { locations } = storeToRefs(locationStore);
-const route = useRoute();
 
-onBeforeRouteUpdate(async (to, from) => {
-    console.log('update')
-    const locId = to.query.locationId;
-
-    if (locId) {
-        await store.setProducts({ locationId: locId });
-    } else await store.setProducts()
+onBeforeMount(async () => {
+    if (route.query.locationId) {
+        locationFilter.value = route.query.locationId as string;
+    }
+    if (route.query.locationId || route.query.status) {
+        await store.setProducts(route.query)
+    }
 })
 
 function setSort(event: Event) {
@@ -143,6 +148,12 @@ function setSort(event: Event) {
     
 }
 
+function navigate(queryParamKey: string, queryParamValue?: string) {
+    const newQuery = {...route.query, [queryParamKey ?? '']: queryParamValue };
+    router.push({ path: '/groceries', query: newQuery}).then(async () => {
+        await store.setProducts(newQuery)
+    });
+}
 </script>
 
 <style src="@vueform/multiselect/themes/default.css"></style>
@@ -285,6 +296,10 @@ function setSort(event: Event) {
     background-color: var(--accent-primary);
     padding: 0.2rem 0.5rem;
     border-radius: 0.2rem;
+}
+
+.error-msg {
+    padding: 2rem;
 }
 
 </style>
