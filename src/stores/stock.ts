@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import type { Product } from '@/types';
 import { getProductsInStock } from '@/services/api/products';
 import { ref } from 'vue';
+import { parseQueryWithStatus } from '@/services/helpers/status';
 
 export const useStock = defineStore('stock', () => {
   // State values
@@ -17,7 +18,10 @@ export const useStock = defineStore('stock', () => {
   }
 
   // Actions
-  async function setProducts(query?: Object) {
+  async function setProducts(query?: any) {
+    if (query && query.status) {
+      query = parseQueryWithStatus(query);
+    }
     stock.value = await getProductsInStock(query);
   }
 

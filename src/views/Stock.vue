@@ -41,7 +41,6 @@
         </div>
     </div>
     <div class="container" v-else>
-
         <div class="categories">
             <span :class="{ 'active-category': locationFilter == '' }" @click="locationFilter = ''; navigate('locationId')">All locations</span>
             <span v-for="item in locations" :key="item.id" @click="locationFilter = item.id; navigate('locationId', item.id)" :class="{ 'active-category': locationFilter == item.id }">{{ item.name }}</span>

@@ -4,37 +4,22 @@ export const statusObjects = [
     {
         value: 'inStock',
         label: 'In stock',
-        query: {
-            inStock: true
-        }
     },
     {
         value: 'onShoppingList',
         label: 'On shopping list',
-        query: {
-            onShoppingList: true
-        }
     },
     {
         value: 'closeToExpiry',
         label: 'Use up in about 5 days',
-        query: {
-            useUp: ''
-        }
     },
     {
         value: 'expiresToday',
         label: 'Use up today',
-        query: {
-            useUp: ''
-        }
     },
     {
         value: 'expired',
         label: 'Expired',
-        query: {
-            useUp: ''
-        }
     },
 ]
 
@@ -44,8 +29,10 @@ export function setStatus(product: Product) {
     if (product.useUp) {
         const countdown = calculateUseUpBy(product.useUp);
 
+        console.log(product.name + ' ' + countdown)
+
         if (countdown < 0) {
-            status = 'Expired for ' + countdown + ' days'
+            status = 'Expired for ' + -countdown + ' days'
         }
         else if  (countdown == 0) {
             status = 'Use up today';
@@ -62,8 +49,63 @@ export function setStatus(product: Product) {
     return status;
 }
 
+export function parseQueryWithStatus(query: any) {
+    let statusQuery = {};
+    switch (query.status) {
+        case 'inStock': 
+            statusQuery = {
+                inStock: true,
+                useUpMin: getDateWithOffset(new Date, 6)
+            }
+            break;
+        case 'onShoppingList':
+            statusQuery = {
+                onShoppingList: true
+            }
+            break;
+        case 'closeToExpiry':
+            statusQuery = {
+                hasUseUp: true,
+                useUpMin: getDateWithOffset(new Date, 1),
+                useUpMax: getDateWithOffset(new Date, 5)
+            }
+            break;
+        case 'expiresToday':
+            statusQuery = {
+                hasUseUp: true,
+                useUpMin: getFormattedDate(new Date),
+                useUpMax: getFormattedDate(new Date)
+            }
+            break;
+        case 'expired':
+            statusQuery = {
+                hasUseUp: true,
+                useUpMax: getDateWithOffset(new Date, -1)
+            }
+            break;
+        default: 
+            break;
+    }
+
+    const parsedQuery = {...query, ...statusQuery};
+
+    console.log(parsedQuery);
+    return parsedQuery;
+}
+
+function getDateWithOffset(date: Date, offsetDays: number) {
+    const dateOffset = (24 * 60 * 60 * 1000) * offsetDays;
+    const time = date.setTime(date.getTime() + dateOffset);
+    return getFormattedDate(new Date(time));
+}
+
+function getFormattedDate(date: Date) {
+    date.setUTCHours(0,0,0,0);
+    return date.toISOString().substring(0,10);
+}
+
 function calculateUseUpBy(useUp: Date) {
     const today = new Date();
-    const diffTime = Math.abs(useUp.getTime() - today.getTime());
+    const diffTime = useUp.getTime() - today.getTime();
     return Math.ceil(diffTime / (1000 * 60 * 60 * 24));     
 }
