@@ -24,7 +24,7 @@
 import { computed, ref } from 'vue';
 import { useStore } from 'vuex';
 import { editShoppingListDetails, addProductToStock, useUpProduct, removeProductFromShoppingList } from '@/services/api'
-import { isMobile } from '@/services/helpers/helpers'
+import isMobile from '@/services/helpers/isMobile'
 
 const model = ref(null);
 

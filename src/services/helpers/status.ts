@@ -38,16 +38,6 @@ export const statusObjects = [
     },
 ]
 
-
-export function isMobile() {
-    if( screen.width <= 760 ) {
-        return true;
-    }
-    else {
-        return false;
-    }
-}
-
 export function setStatus(product: Product) {
     let status = 'In stock';
 

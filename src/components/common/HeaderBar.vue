@@ -35,7 +35,7 @@ import Button from './Button.vue'
 import AddProduct from '../modals/AddProduct.vue'
 import UsedUpModal from '../modals/UsedUpModal.vue'
 import ShoppingListModal from '../modals/ShoppingListModal.vue'
-import { isMobile } from '@/services/helpers/helpers'
+import isMobile from '@/services/helpers/isMobile'
 
 import { useRoute } from 'vue-router';
 import { ref, watch } from 'vue';

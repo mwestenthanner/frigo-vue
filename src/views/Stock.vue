@@ -83,7 +83,8 @@ import { ref, onBeforeMount } from 'vue'
 import Multiselect from '@vueform/multiselect'
 import ListItem from '@/components/common/ListItem.vue';
 import SearchFilter from '@/components/common/SearchFilter.vue';
-import { isMobile, statusObjects } from '@/services/helpers/helpers'
+import { statusObjects } from '@/services/helpers/status';
+import isMobile from '@/services/helpers/isMobile';
 import { useStock } from '@/stores/stock';
 import { useLocationStore } from '@/stores/locations';
 import { useRoute, useRouter } from 'vue-router';
@@ -111,7 +112,7 @@ onBeforeMount(async () => {
     }
     if (route.query.locationId || route.query.status) {
         await store.setProducts(route.query)
-    }
+    } else await store.setProducts();
 })
 
 function setSort(event: Event) {
