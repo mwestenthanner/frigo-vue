@@ -29,8 +29,6 @@ export function setStatus(product: Product) {
     if (product.useUp) {
         const countdown = calculateUseUpBy(product.useUp);
 
-        console.log(product.name + ' ' + countdown)
-
         if (countdown < 0) {
             status = 'Expired for ' + -countdown + ' days'
         }
