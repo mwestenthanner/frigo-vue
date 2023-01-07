@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import type { Product } from '@/types';
-import { getProductsInStock } from '@/services/api/products';
+import { getProductsInStock, updateProduct } from '@/services/api/products';
 import { ref } from 'vue';
 import { parseQueryWithStatus } from '@/services/helpers/status';
 
@@ -18,18 +18,29 @@ export const useStock = defineStore('stock', () => {
   }
 
   // Actions
-  async function setProducts(query?: any) {
+  async function setStoreProducts(query?: any) {
     if (query && query.status) {
       query = parseQueryWithStatus(query);
     }
     stock.value = await getProductsInStock(query);
   }
 
-  function addProduct(product: Product) {
-    stock.value?.push(product);
+  async function addStoreProduct(productId: string, locationId?: string, useUp?: Date ) {
+    let updateData = { inStock: true } as any
+
+    if (locationId) updateData.locationId = locationId;
+    if (useUp) updateData.useUp = useUp;
+
+    await updateProduct(productId, updateData)
+    stock.value = await getProductsInStock();
   }
 
-  function removeProduct(productId: string) {
+  async function updateStoreProduct(productId: string, updateData: any ) {
+    await updateProduct(productId, updateData)
+    stock.value = await getProductsInStock();
+  }
+
+  function removeStoreProduct(productId: string) {
     const index = stock.value?.findIndex(i => i.id === productId);
     if (index) {
       stock.value?.splice(index, 1);
@@ -40,8 +51,8 @@ export const useStock = defineStore('stock', () => {
     stock,
     getProductFromId,
     getProductFromName,
-    setProducts,
-    addProduct,
-    removeProduct
+    setStoreProducts,
+    addStoreProduct,
+    removeStoreProduct
   }
 })

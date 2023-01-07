@@ -119,8 +119,8 @@ onBeforeMount(async () => {
     }
 
     if (route.query.locationId || route.query.status || route.query.sort || route.query.sortBy) {
-        await store.setProducts(route.query)
-    } else await store.setProducts();
+        await store.setStoreProducts(route.query)
+    } else await store.setStoreProducts();
 
     if (route.query.sort || route.query.sortBy) {
         setSortChevron();
@@ -168,7 +168,7 @@ function setSortChevron() {
 function navigate(queryParamKey: string, queryParamValue?: string, removeParamKey?: string) {
     const newQuery = {...route.query, [queryParamKey]: queryParamValue, [removeParamKey ?? ''] : undefined };
     router.push({ path: '/groceries', query: newQuery}).then(async () => {
-        await store.setProducts(newQuery)
+        await store.setStoreProducts(newQuery)
     });
 }
 </script>

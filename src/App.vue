@@ -12,17 +12,18 @@
 <script lang="ts" setup>
 import Sidebar from './components/common/Sidebar.vue'; 
 import HeaderBar from './components/common/HeaderBar.vue';
-import { onBeforeMount, computed } from 'vue';
+import { onBeforeMount } from 'vue';
 import MobileNav from './components/common/MobileNav.vue'
 
 import { useLocationStore } from '@/stores/locations';
-import { useStock } from '@/stores/stock';
+import { useProductStore } from './stores/products';
 
 const locations = useLocationStore();
-const stock = useStock();
+const products = useProductStore();
 
 onBeforeMount(async () => {
   await locations.setLocations();
+  await products.setProducts();
 })
 </script>
 

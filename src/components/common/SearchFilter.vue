@@ -14,7 +14,7 @@ const store = useStock();
 
 function updateSearch() {
     const query = { q: searchText.value }
-    store.setProducts(query)
+    store.setStoreProducts(query)
 }
 
 </script>
