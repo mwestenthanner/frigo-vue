@@ -2,7 +2,7 @@
     <div class="list-item">
         <p>{{ props.product.name }}</p>
         <p class="tag">{{ locationStore.getLocationFromId(props.product.locationId)?.name }}</p>
-        <p class="status">{{ setStatus(product) }}</p>
+        <p class="status" :class="{ expired: setStatus(product).includes('Expired') }">{{ setStatus(product) }}</p>
         <Controls :product="props.product" />
 
     </div>
@@ -21,7 +21,6 @@ const locationStore = useLocationStore();
 const props = defineProps<{
   product: Product
 }>()
-
     
 </script>
 
@@ -53,7 +52,7 @@ const props = defineProps<{
 }
 
 .expired {
-    color: rgb(165, 15, 15);
+    color: rgb(211, 14, 14);
     font-weight: bold;
 }
 

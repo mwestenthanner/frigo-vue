@@ -36,6 +36,8 @@ async function getProductsInStock(query?: {
     locationId?: string,
     quantity?: number, 
     onShoppingList?: boolean,
+    sort?: string,
+    sortBy?: string
 }) {
     const response = await axios.get(apiUrl + 'stock', { params: query });
     return response.data.map((item: { _id: string; name: string; locationId: string; inStock: boolean; unit: string; quantity?: number;  useUp?: Date; alwaysInStock?: boolean; onShoppingList?: boolean; quantityOnShoppingList?: number; notes?: string; }) => {

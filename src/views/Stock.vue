@@ -62,10 +62,10 @@
             </div>
             <div class="list-heading">
                 <div class="heading-item">
-                    <h3 class="sort-up" id="name" @click="setSort($event)">Item</h3>
+                    <h3 class="sort-up" id="name" @click="setSort($event.target as Element)">Item</h3>
                 </div>
-                <h3 id="location" @click="setSort($event)" class="tag-heading">Location</h3>
-                <h3 id="status" @click="setSort($event)">Status</h3>
+                <h3 id="locationId" @click="setSort($event.target as Element)" class="tag-heading">Location</h3>
+                <h3 id="status" @click="setSort($event.target as Element)">Status</h3>
                 <h3>Modify</h3>
             </div>
             <div class="list">
@@ -109,47 +109,64 @@ onBeforeMount(async () => {
     if (route.query.locationId) {
         locationFilter.value = route.query.locationId as string;
     }
-    if (route.query.locationId || route.query.status) {
+
+    if (route.query.sort) {
+        sortUp.value = false;
+    }
+
+    if (route.query.sortBy) {
+        sortParam.value = route.query.sortBy as string;
+    }
+
+    if (route.query.locationId || route.query.status || route.query.sort || route.query.sortBy) {
         await store.setProducts(route.query)
     } else await store.setProducts();
+
+    if (route.query.sort || route.query.sortBy) {
+        setSortChevron();
+    }
 })
 
-function setSort(event: Event) {
-
-    if (event.target instanceof Element) { 
-
-        // if parameter changes, set default sort direction, else invert sort direction
-        if (sortParam.value == event.target.id) {
-            sortUp.value = !sortUp.value;
-        } else {
-            sortParam.value = event.target.id;
-            sortUp.value = true;
-        }
-
-        // remove any chevrons
-        const elementsUp = document.getElementsByClassName("sort-up");
-        while (elementsUp.length) {
-            elementsUp[0].classList.remove("sort-up");
-        }
-
-        const elementsDown = document.getElementsByClassName("sort-down");
-        while (elementsDown.length) {
-            elementsDown[0].classList.remove("sort-down");
-        }
-
-        // show chevron on correct element
-        if (sortUp.value == true) {
-            event.target.classList.add("sort-up");
-        } else {
-            event.target.classList.add("sort-down");
-        }
-        
+function setSort(element: Element) {
+    if (sortParam.value == element.id) {
+        sortUp.value = !sortUp.value;
+        if (!sortUp.value) {
+            navigate('sort', 'DESC');
+        } else navigate('sort');
+    } else {
+        sortParam.value = element.id;
+        sortUp.value = true;
+        if (element.id == "name") {
+            navigate('sortBy', undefined, 'sort');
+        } else navigate('sortBy', sortParam.value, 'sort');
     }
-    
+
+    setSortChevron();
 }
 
-function navigate(queryParamKey: string, queryParamValue?: string) {
-    const newQuery = {...route.query, [queryParamKey ?? '']: queryParamValue };
+function setSortChevron() {
+    const element = document.getElementById(sortParam.value);
+    // remove any chevrons
+    const elementsUp = document.getElementsByClassName("sort-up");
+    while (elementsUp.length) {
+        elementsUp[0].classList.remove("sort-up");
+    }
+
+    const elementsDown = document.getElementsByClassName("sort-down");
+    while (elementsDown.length) {
+        elementsDown[0].classList.remove("sort-down");
+    }
+
+    // show chevron on correct element
+    if (sortUp.value == true) {
+        element?.classList.add("sort-up");
+    } else {
+        element?.classList.add("sort-down");
+    }
+}
+
+function navigate(queryParamKey: string, queryParamValue?: string, removeParamKey?: string) {
+    const newQuery = {...route.query, [queryParamKey]: queryParamValue, [removeParamKey ?? ''] : undefined };
     router.push({ path: '/groceries', query: newQuery}).then(async () => {
         await store.setProducts(newQuery)
     });

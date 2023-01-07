@@ -11,7 +11,7 @@ export const statusObjects = [
     },
     {
         value: 'closeToExpiry',
-        label: 'Use up in about 5 days',
+        label: 'Use up in less than 5 days',
     },
     {
         value: 'expiresToday',
@@ -86,8 +86,6 @@ export function parseQueryWithStatus(query: any) {
     }
 
     const parsedQuery = {...query, ...statusQuery};
-
-    console.log(parsedQuery);
     return parsedQuery;
 }
 
