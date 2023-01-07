@@ -4,15 +4,28 @@
       <div id="modal" @click.stop>
             <h2>Create new product</h2>
 
+            <ErrorMessage message="Please fill all values out before submitting." v-if="error" />
+
+            <label for="name">Name</label>
+            <input id="name" type="text" v-model="productName" />
+
             <label for="location-select">Default location</label>
             <Multiselect
                 id="location-select"
-                v-model="locationValue"
-                :options="getOptions(locationOptions)"
-                />
+                v-model="location"
+                placeholder="Location"
+                label="name"
+                :options="getOptions(locations as any)"
+                :searchable="true"
+            />
+
+            <label for="unit">Unit</label>
+            <input id="unit" type="text" v-model="unit" />
+
+            <input v-model="inStock" type="checkbox" name="toggle-stock" id="toggle-stock"><label for="toggle-stock">In stock</label>
 
             <div class="buttons">
-              <button type="submit" @click="addProduct();">Save</button>
+              <button type="submit" @click="createProduct()">Save</button>
               <button type="button" @click="$emit('close-modal')">Cancel</button>
             </div>
             
@@ -24,60 +37,33 @@
   
 <script lang="ts" setup>
 import Multiselect from '@vueform/multiselect'
-import { computed, ref, defineEmits } from 'vue';
-import { useStore } from 'vuex';
-import { addProductToStock } from '@/services/api';
+import ErrorMessage from '@/components/common/ErrorMessage.vue';
+import { ref } from 'vue';
+import { getOptions } from '@/services/helpers/multiselect';
+import { useLocationStore } from '@/stores/locations';
+import { storeToRefs } from 'pinia';
+import { useProductStore } from '@/stores/products';
 
-const store = useStore();
+const productName = ref();
+const location = ref();
+const unit = ref();
+const inStock = ref(true);
+const error = ref(false);
 
-const productValue = ref('');
-const locationValue = ref('');
-const expiry = ref('');
-
-const noExpiry= ref(false);
-
-const productOptions = computed(() => store.getters.getProducts);
-const locationOptions = computed(() => store.getters.getLocations);
+const locationStore = useLocationStore();
+const productStore = useProductStore();
+const { locations } = storeToRefs(locationStore);
 
 const emit = defineEmits(['close-modal'])
 
-function getOptions(property: {
-[x: string]: any; value: any[]; 
-}) {
-    const options: any[] = [];
-
-    property.forEach((element: any) => {
-        options.push(element.name);
-    });
-
-    return options;
-}
-
-function addProduct() {
-
-    // Fill expiry if box is checked
-    if (noExpiry.value == true) {
-        expiry.value = '2099-12-31';
-    }
-
-    // Check if all fields are filled 
-    if (!productValue.value || !expiry.value || !locationValue.value) {
-        alert('Please fill all values');
+async function createProduct() {
+    if (!productName.value || !location.value || !unit.value) {
+        error.value = true;
     } else {
-
-        const productId = computed(() => store.getters.getProductIdFromName(productValue.value));
-        const locationId = computed(() => store.getters.getLocationIdFromName(locationValue.value));
-
-        addProductToStock(productId.value, 999, locationId.value, expiry.value);
-        
-        emit('close-modal');
-
+        await productStore.addProductToStore({ name: productName.value, locationId: location.value, inStock: inStock.value, unit: unit.value });
+        emit('close-modal'); 
     }
-
-
-
 }
-
 </script>
 
 <style src="@vueform/multiselect/themes/default.css"></style>
@@ -88,18 +74,18 @@ h2 {
     margin-bottom: 2rem;
 }
 
-input[type=date] {
-  display: block;
-  margin-bottom: 1rem;
-  width: 95%;
+input:not([type="checkbox"]) {
+    display: block;
+    margin-bottom: 1rem;
+    width: 95%;
 }
 
-.multiselect, input[type=date] {
+input[type="checkbox"] {
+    margin-right: 0.5rem;
+}
+
+.multiselect, input {
     margin: 1rem 0;
-}
-
-select {
-  width: 100%;
 }
 
 .buttons {
@@ -112,16 +98,7 @@ button {
     width: 100%;
 }
 
-label[for="expiry"] {
+label:not([for="toggle-stock"]) {
     display: block;
 }
-
-#toggle-expiry {
-    margin-top: 1rem;
-}
-
-label[for="toggle-expiry"] {
-    margin-left: 1rem;
-}
-
 </style>
