@@ -21,21 +21,13 @@ export const useLocationStore = defineStore('locations', () => {
   }
 
   async function addLocationToStore(locationName: string) {
-    const locationId = await addLocation(locationName);
-
-    locations.value?.push({
-      id: locationId,
-      name: locationName
-    });
+    await addLocation(locationName);
+    locations.value = await getLocations();
   }
 
   async function removeLocationFromStore(locationId: string) {
-    const index = locations.value?.findIndex(i => i.id === locationId);
-    if (index) {
-      locations.value?.splice(index, 1);
-    }
-
     await removeLocation(locationId);
+    locations.value = await getLocations();
   }
 
   return { 

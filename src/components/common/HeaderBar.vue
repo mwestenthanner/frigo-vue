@@ -13,6 +13,7 @@
           <li @click="addMode = true;">Add product to stock</li>
           <li @click="shoppingListMode = true;">Add product to shopping list</li>
           <li @click="createMode = true;">Create new product</li>
+          <li @click="createLocMode = true;">Create new location</li>
         </ul>
       </div>
     </div>
@@ -27,6 +28,7 @@
 <UsedUpModal v-if="useUpMode" @close-modal="useUpMode = false" />
 <ShoppingListModal v-if="shoppingListMode" @close-modal="shoppingListMode = false" />
 <CreateProduct v-if="createMode" @close-modal="createMode = false" />
+<CreateLocation v-if="createLocMode" @close-modal="createLocMode = false" />
 </template>
 
 <script lang="ts" setup>
@@ -36,12 +38,13 @@ import AddProduct from '../modals/AddProduct.vue'
 import UsedUpModal from '../modals/UsedUpModal.vue'
 import ShoppingListModal from '../modals/ShoppingListModal.vue'
 import isMobile from '@/services/helpers/isMobile'
+import CreateProduct from '../modals/CreateProduct.vue';
+import CreateLocation from '../modals/CreateLocation.vue';
+import HeaderMobile from './HeaderMobile.vue'
 
 import { useRoute } from 'vue-router';
 import { ref, watch } from 'vue';
-import CreateProduct from '../modals/CreateProduct.vue';
 import { useStore } from 'vuex';
-import HeaderMobile from './HeaderMobile.vue'
 
 const store = useStore();
 const route = useRoute();
@@ -52,6 +55,7 @@ const addMode = ref(false);
 const useUpMode = ref(false);
 const shoppingListMode = ref(false);
 const createMode = ref(false);
+const createLocMode = ref(false);
 
 watch(route, (from, to) => {
   heading.value = route.name;
