@@ -5,20 +5,21 @@
         <h2>Edit {{ props.product.name }}</h2>
         <div class="best-before-setting">
           <h4>Best Before Date</h4>
-          <input v-show="!doesNotExpire" v-model="expiry" type="date" name="expiry" id="expiry">
+          <input v-show="!doesNotExpire" v-model="useUp" type="date" name="expiry" id="expiry">
           <input v-model="doesNotExpire" type="checkbox" name="toggle-expiry" id="toggle-expiry"><label for="toggle-expiry">No date set</label>
-        </div>
-
-        <div class="status-setting">
-          <h4>Product status</h4>
-          <select name="status" id="status">
-            <option>{{ props.product.status }}</option>
-          </select>     
         </div>
 
         <div class="detail-setting">
           <h4>Other</h4>
-          <input v-model="isMandatory" type="checkbox" name="toggle-mandatory" id="toggle-mandatory"><label for="toggle-mandatory">Product needs to be in stock</label>     
+          <div class="detail-input">
+            <input v-model="inStock" type="checkbox" name="toggle-mandatory" id="toggle-mandatory"><label for="toggle-mandatory">In stock</label>
+          </div>
+          <div class="detail-input">
+            <input v-model="onShoppingList" type="checkbox" name="toggle-mandatory" id="toggle-mandatory"><label for="toggle-mandatory">On shopping list</label>
+          </div>
+          <div class="detail-input">
+            <input v-model="alwaysInStock" type="checkbox" name="toggle-mandatory" id="toggle-mandatory"><label for="toggle-mandatory">Should always be in stock</label>  
+          </div>  
         </div>
 
         <div class="buttons">
@@ -34,37 +35,46 @@
 
 <script lang="ts" setup>
 import { ref } from 'vue'
+import Multiselect from '@vueform/multiselect'
 import type { Product } from '../../types'
-import { editProductDetails } from '../../services/api'
+import { useStock } from '@/stores/stock';
 
 const props = defineProps<{
   product: Product
 }>()
 
-const expiry = ref(props.product.expiry.toISOString().split('T')[0]);
-const doesNotExpire = ref(getExpiry(props.product.expiry));
-const isMandatory = ref(props.product.mandatory);
+const stock = useStock();
 
-function getExpiry(date: Date) {
-  if (date.toISOString().split('T')[0] == '2099-12-31') {
-    return true;
-  } else return false;
-}
+const useUp = ref(props.product.useUp?.toISOString().split('T')[0]);
+const doesNotExpire = ref(!(useUp.value));
+const inStock = ref(props.product.inStock);
+const onShoppingList = ref(props.product.onShoppingList);
+const alwaysInStock = ref(props.product.alwaysInStock);
 
 function saveChanges() {
+  const updateObj = {} as any;
 
-  let expiryDate = '';
+  if (!doesNotExpire.value && useUp.value) {
+    updateObj.useUp = useUp.value; 
+  } 
 
-  if (doesNotExpire.value == true) {
-    expiryDate = '2099-12-31';
-  } else {
-    expiryDate = expiry.value; 
+  if (doesNotExpire.value) {
+    updateObj.useUp = null;
   }
 
-  console.log(expiryDate);
+  if (inStock.value) {
+    updateObj.inStock = true;
+  } else updateObj.inStock = false;
 
-  editProductDetails(props.product, expiryDate, isMandatory.value, undefined)
+  if (onShoppingList.value) {
+    updateObj.onShoppingList = true;
+  } else updateObj.onShoppingList = false;
 
+  if (alwaysInStock.value) {
+    updateObj.alwaysInStock = true;
+  } else updateObj.alwaysInStock = false;
+
+  stock.updateStoreProduct(props.product.id, updateObj);
 }
 
 </script>
@@ -96,6 +106,11 @@ select {
 #locations {
     width: 100%;
     margin: 1rem 0;
+}
+
+.detail-input {
+  display: flex;
+  margin-bottom: 0.5rem;
 }
 
 .buttons {

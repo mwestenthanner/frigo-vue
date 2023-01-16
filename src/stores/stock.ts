@@ -56,6 +56,7 @@ export const useStock = defineStore('stock', () => {
     getProductFromName,
     setStoreProducts,
     addStoreProduct,
+    updateStoreProduct,
     removeProductFromStock,
     addProductToShoppingList
   }
