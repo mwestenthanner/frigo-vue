@@ -50,6 +50,11 @@ export const useStock = defineStore('stock', () => {
     stock.value = await getProductsInStock();
   }
 
+  async function moveProductLocation(productId: string, locationId: string) {
+    await updateProduct(productId, { locationId: locationId });
+    stock.value = await getProductsInStock();
+  }
+
   return { 
     stock,
     getProductFromId,
@@ -58,6 +63,7 @@ export const useStock = defineStore('stock', () => {
     addStoreProduct,
     updateStoreProduct,
     removeProductFromStock,
-    addProductToShoppingList
+    addProductToShoppingList,
+    moveProductLocation
   }
 })

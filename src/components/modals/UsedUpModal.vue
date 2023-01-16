@@ -19,8 +19,8 @@
         </div>
         <p>Do you want to add it to your shopping list?</p>
         <div class="buttons">
-            <button type="submit" @click="saveChanges(true); $emit('close-modal')">Yes</button>
-            <button type="button" @click="saveChanges(false); $emit('close-modal')">No</button>
+            <button type="submit" @click="saveChanges(true)">Yes</button>
+            <button type="button" @click="saveChanges(false)">No</button>
             <button type="button" @click="$emit('close-modal')">Cancel</button>
         </div>
     </div>
@@ -45,16 +45,23 @@ const productValue = ref('');
 const error = ref(false);
 
 const options = getOptions(stock.value)
+const emit = defineEmits(['close-modal'])
 
 if (props.product) {
   productValue.value = props.product.id
 }
 
 function saveChanges(shoppingList: boolean) {
-  store.removeProductFromStock(productValue.value);
+  if (!productValue.value) {
+    error.value = true;
+  } else {
+    store.removeProductFromStock(productValue.value);
 
-  if (shoppingList) {
-    store.addProductToShoppingList(productValue.value);
+    if (shoppingList) {
+      store.addProductToShoppingList(productValue.value);
+    }
+
+    emit('close-modal');
   }
 }
 
