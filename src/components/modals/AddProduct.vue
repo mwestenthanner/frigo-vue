@@ -43,7 +43,7 @@
   
 <script lang="ts" setup>
 import Multiselect from '@vueform/multiselect'
-import { ref, defineEmits } from 'vue';
+import { ref } from 'vue';
 import { useLocationStore } from '@/stores/locations';
 import { storeToRefs } from 'pinia';
 import { useProductStore } from '@/stores/products';

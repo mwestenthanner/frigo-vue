@@ -26,7 +26,7 @@
 </template>
 
 <script lang="ts" setup>
-import { defineProps, ref, computed, toRef } from 'vue'
+import { ref, computed, toRef } from 'vue'
 import Multiselect from '@vueform/multiselect'
 import type { Product } from '../../types'
 import { useStore } from 'vuex';

@@ -12,7 +12,7 @@
 <script lang="ts" setup>
 import { setStatus } from '@/services/helpers/status';
 import { useLocationStore } from '@/stores/locations';
-import { defineProps, ref } from 'vue';
+import { ref } from 'vue';
 import type { Product } from '../../types';
 import Controls from './Controls.vue';
 

@@ -368,7 +368,6 @@
 </script>
 
 <style scoped>
-
 .sidebar {
     background-color: var(--background);
     color: var(--font-main);

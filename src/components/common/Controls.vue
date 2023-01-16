@@ -29,7 +29,7 @@
 </template>
 
 <script lang="ts" setup>
-import { defineProps, ref } from 'vue'
+import { ref } from 'vue'
 import type { Product } from '@/types'
 import EditProduct from '@/components/modals/EditProduct.vue'
 import MoveProduct from '@/components/modals/MoveProduct.vue'

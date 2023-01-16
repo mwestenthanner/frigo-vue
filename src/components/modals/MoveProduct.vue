@@ -31,7 +31,7 @@
 </template>
 
 <script lang="ts" setup>
-import { defineProps, computed, ref, toRef } from 'vue'
+import { computed, ref, toRef } from 'vue'
 import Multiselect from '@vueform/multiselect'
 import type { Product } from '../../types'
 import { moveProduct } from '../../services/api'
