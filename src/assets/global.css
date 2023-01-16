@@ -146,6 +146,7 @@ label {
 
 .multiselect {
     height: 3rem;
+    font-family: Inter;
 }
 
 .multiselect-search {

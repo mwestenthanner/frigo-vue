@@ -40,11 +40,14 @@ export const useStock = defineStore('stock', () => {
     stock.value = await getProductsInStock();
   }
 
-  function removeStoreProduct(productId: string) {
-    const index = stock.value?.findIndex(i => i.id === productId);
-    if (index) {
-      stock.value?.splice(index, 1);
-    }
+  async function removeProductFromStock(productId: string) {
+    await updateProduct(productId, { inStock: false});
+    stock.value = await getProductsInStock();
+  }
+
+  async function addProductToShoppingList(productId: string) {
+    await updateProduct(productId, { onShoppingList: true });
+    stock.value = await getProductsInStock();
   }
 
   return { 
@@ -53,6 +56,7 @@ export const useStock = defineStore('stock', () => {
     getProductFromName,
     setStoreProducts,
     addStoreProduct,
-    removeStoreProduct
+    removeProductFromStock,
+    addProductToShoppingList
   }
 })

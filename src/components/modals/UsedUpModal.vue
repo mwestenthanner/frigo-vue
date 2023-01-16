@@ -3,12 +3,17 @@
 
     <div id="modal" @click.stop>
         <h2>Use up product</h2>
+
+        <ErrorMessage message="Please choose a product before submitting." v-if="error"/>
+
         <div class="choose-product">
-          <label for="product-select">Product</label>
+          <label for="product-select">Select product</label>
             <Multiselect
                 id="product-select"
                 v-model="productValue"
-                :options="getOptions(productsInStock)"
+                :options="options"
+                placeholder="Product"
+                label="name"
                 :searchable="true"
                 />
         </div>
@@ -25,49 +30,32 @@
 </template>
 
 <script lang="ts" setup>
-import { defineProps, ref, computed, toRef } from 'vue'
 import Multiselect from '@vueform/multiselect'
-import type { Product } from '../../types'
-import { useStore } from 'vuex';
-import { useUpProduct, addProductToShoppingList } from '../../services/api'
+import ErrorMessage from '../common/ErrorMessage.vue';
+import { ref } from 'vue'
+import { getOptions } from '@/services/helpers/multiselect';
+import { useStock } from '@/stores/stock';
+import { storeToRefs } from 'pinia';
 
-const store = useStore();
-
-const props = defineProps<{
-  product?: Product
-}>()
+const props = defineProps(['product']);
+const store = useStock();
+const { stock } = storeToRefs(store);
 
 const productValue = ref('');
+const error = ref(false);
+
+const options = getOptions(stock.value)
 
 if (props.product) {
-  const product = toRef(props, 'product');
-  productValue.value = product.value?.name ?? '';
-} 
-
-const productsInStock = computed(() => store.getters.getStock);
-
-function getOptions(property: {
-[x: string]: any; value: any[]; 
-}) {
-    const options: any[] = [];
-
-    property.forEach((element: any) => {
-        options.push(element.name);
-    });
-
-    return options;
+  productValue.value = props.product.id
 }
 
 function saveChanges(shoppingList: boolean) {
-
-  const productId = computed(() => store.getters.getProductIdFromName(productValue.value));
-
-  useUpProduct(productId.value);
+  store.removeProductFromStock(productValue.value);
 
   if (shoppingList) {
-    addProductToShoppingList(productId.value, 999);
+    store.addProductToShoppingList(productValue.value);
   }
-
 }
 
 </script>
