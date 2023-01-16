@@ -2,21 +2,26 @@
   <div id="modal-overlay" @click="$emit('close-modal')">
 
     <div id="modal" @click.stop>
-        <h2>Add product to shopping list</h2>
+        <h2 v-if="!onShoppingList">Add product to shopping list</h2>
+        <h2 v-else>Remove product from shopping list</h2>
+        <ErrorMessage message="Please choose a product before submitting." v-if="error"/>
+
         <div class="choose-product">
-          <label for="shopping-select">Product</label>
+          <label for="shopping-select">Select product</label>
             <Multiselect
                 id="shopping-select"
                 v-model="productValue"
-                :options="getOptions(productList)"
+                placeholder="Product"
+                label="name"
+                :options="getOptions(products)"
                 :searchable="true"
                 />
         </div>
-        <div class="remove" v-if="productInStock">
+        <div class="remove" v-if="productInStock && !onShoppingList">
           <input v-model="removeFromStock" type="checkbox" name="toggle-stock" id="toggle-stock"><label for="toggle-stock">Remove product from stock</label>
         </div>
         <div class="buttons">
-            <button type="submit" @click="saveChanges(removeFromStock); $emit('close-modal')">Confirm</button>
+            <button type="submit" @click="saveChanges(removeFromStock)">Confirm</button>
             <button type="button" @click="$emit('close-modal')">Cancel</button>
         </div>
     </div>
@@ -26,51 +31,50 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, computed, toRef } from 'vue'
+import { ref } from 'vue'
 import Multiselect from '@vueform/multiselect'
+import ErrorMessage from '../common/ErrorMessage.vue';
+import { getOptions } from '@/services/helpers/multiselect';
 import type { Product } from '../../types'
-import { useStore } from 'vuex';
-import { useUpProduct, addProductToShoppingList } from '../../services/api'
+import { useProductStore } from '@/stores/products';
+import { storeToRefs } from 'pinia';
+import { useStock } from '@/stores/stock';
 
-const store = useStore();
+const store = useProductStore();
+const stock = useStock();
+const { products } = storeToRefs(store);
+const emit = defineEmits(['close-modal'])
 
 const props = defineProps<{
   product?: Product
 }>()
 
-const productValue = ref('');
+const productValue = ref();
+const onShoppingList = ref(false);
+const productInStock = ref(false);
 const removeFromStock = ref(true);
+const error = ref(false);
 
 if (props.product) {
-  const product = toRef(props, 'product');
-  productValue.value = product.value?.name ?? '';
+  productValue.value = props.product.id
+  productInStock.value = props.product.inStock;
+  onShoppingList.value = props.product.onShoppingList;
 } 
 
-const productList = computed(() => store.getters.getProducts);
-const productInStock = computed(() => store.getters.productIsInStock(productValue.value));
-
-function getOptions(property: {
-[x: string]: any; value: any[]; 
-}) {
-    const options: any[] = [];
-
-    property.forEach((element: any) => {
-        options.push(element.name);
-    });
-
-    return options;
-}
-
 function saveChanges(useUp: boolean) {
+  if (!productValue.value) {
+    error.value = true;
+  } else {
+    if (onShoppingList.value) {
+      store.updateStoreProduct(productValue.value, { onShoppingList: false }, true)
+    } else if (useUp) {
+      store.updateStoreProduct(productValue.value, { inStock: false, onShoppingList: true }, true)
+    } else {
+      store.updateStoreProduct(productValue.value, { onShoppingList: true }, true);
+    }
 
-  const productId = computed(() => store.getters.getProductIdFromName(productValue.value));
-
-  addProductToShoppingList(productId.value, 999);
-
-  if (useUp) {
-    useUpProduct(productId.value);
+    emit('close-modal');
   }
-
 }
 
 </script>

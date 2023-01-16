@@ -11,9 +11,9 @@
             <Multiselect
                 id="product-select"
                 v-model="productValue"
-                :options="options"
                 placeholder="Product"
                 label="name"
+                :options="options"
                 :searchable="true"
                 />
         </div>
