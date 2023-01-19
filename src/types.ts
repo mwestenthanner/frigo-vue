@@ -9,6 +9,8 @@ export interface Product {
     useUp: Date | null
     alwaysInStock: boolean
     onShoppingList: boolean
+    markedAsBought: boolean
+    buyAgain: boolean
     quantityOnShoppingList: number | null // also optional
     notes: string | null
 }

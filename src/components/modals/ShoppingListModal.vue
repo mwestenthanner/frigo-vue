@@ -39,9 +39,10 @@ import type { Product } from '../../types'
 import { useProductStore } from '@/stores/products';
 import { storeToRefs } from 'pinia';
 import { useStock } from '@/stores/stock';
+import { useShoppingListStore } from '@/stores/shopping';
 
 const store = useProductStore();
-const stock = useStock();
+const shoppingStore = useShoppingListStore();
 const { products } = storeToRefs(store);
 const emit = defineEmits(['close-modal'])
 
@@ -61,18 +62,19 @@ if (props.product) {
   onShoppingList.value = props.product.onShoppingList;
 } 
 
-function saveChanges(useUp: boolean) {
+async function saveChanges(useUp: boolean) {
   if (!productValue.value) {
     error.value = true;
   } else {
     if (onShoppingList.value) {
-      store.updateStoreProduct(productValue.value, { onShoppingList: false }, true)
+      await store.updateStoreProduct(productValue.value, { onShoppingList: false }, true)
     } else if (useUp) {
-      store.updateStoreProduct(productValue.value, { inStock: false, onShoppingList: true }, true)
+      await store.updateStoreProduct(productValue.value, { inStock: false, onShoppingList: true }, true)
     } else {
-      store.updateStoreProduct(productValue.value, { onShoppingList: true }, true);
+      await store.updateStoreProduct(productValue.value, { onShoppingList: true }, true);
     }
 
+    await shoppingStore.setShoppingList();
     emit('close-modal');
   }
 }

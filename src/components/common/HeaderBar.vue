@@ -44,9 +44,7 @@ import HeaderMobile from './HeaderMobile.vue'
 
 import { useRoute } from 'vue-router';
 import { ref, watch } from 'vue';
-import { useStore } from 'vuex';
 
-const store = useStore();
 const route = useRoute();
 let heading = ref();
 
