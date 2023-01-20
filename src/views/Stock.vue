@@ -11,10 +11,7 @@
                 id="location-select"
                 v-model="locationFilter"
                 placeholder="Location"
-                mode="multiple"
-                :close-on-select="false"
                 label="name"
-                :object="true"
                 :options="locations"
                 :searchable="true"
                 @select="navigate('locationId', locationFilter)"
@@ -35,7 +32,11 @@
         <div class="list-mobile">
             <div v-for="item in stock" :key="item.name" :product="item" class="list-item">
                 <span>{{ item.name }}</span>
-                <span class="tag">{{ locationStore.getLocationFromId(item.locationId) }}</span>
+                <div class="tags">
+                    <span v-if="setStatus(item).includes('Expires')" class="tag expiring">{{ setStatus(item) }}</span>
+                    <span v-if="setStatus(item).includes('Expired')" class="tag expired">{{ setStatus(item) }}</span>
+                    <span class="tag">{{ locationStore.getLocationFromId(item.locationId)?.name }}</span>
+                </div>
             </div>
             <p v-if="!stock">No items found.</p>
         </div>
@@ -88,6 +89,7 @@ import { useStock } from '@/stores/stock';
 import { useLocationStore } from '@/stores/locations';
 import { useRoute, useRouter } from 'vue-router';
 import { storeToRefs } from 'pinia'
+import { setStatus } from '@/services/helpers/status';
 
 const store = useStock();
 const locationStore = useLocationStore();
@@ -178,7 +180,7 @@ function navigate(queryParamKey: string, queryParamValue?: string, removeParamKe
 <style scoped>
 
 .categories {
-    margin: 2rem;
+    margin: 2rem 0;
     padding-bottom: 2rem;
     border-bottom: 1px solid var(--font-accent);
 }
@@ -202,7 +204,6 @@ function navigate(queryParamKey: string, queryParamValue?: string, removeParamKe
 }
 
 .filter-bar {
-    padding: 0 2rem;
     display: flex;
     gap: 1rem;
     justify-content: flex-end;
@@ -286,17 +287,16 @@ function navigate(queryParamKey: string, queryParamValue?: string, removeParamKe
 
 .filters {
     display: flex;
-    margin: 1rem 2rem;
+    margin: 1rem 0;
     gap: 1rem;
 }
 
 .filters .multiselect {
-    max-width: 8rem;
     font-size: 80%;
 }
 
 .list-mobile {
-    padding: 1rem 2rem;
+    padding: 1rem 0;
 }
 
 .mobile .list-item {
@@ -307,12 +307,24 @@ function navigate(queryParamKey: string, queryParamValue?: string, removeParamKe
     justify-content: space-between;
 }
 
+.tag:not(:last-child) {
+    margin-right: 0.5rem;
+}
+
 .tag {
     font-size: 60%;
     text-transform: uppercase;
     background-color: var(--accent-primary);
     padding: 0.2rem 0.5rem;
     border-radius: 0.2rem;
+}
+
+.expiring {
+    background-color: rgb(255, 232, 149);  
+}
+
+.expired {
+    background-color: rgb(255, 149, 149);  
 }
 
 .error-msg {

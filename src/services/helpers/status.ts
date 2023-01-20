@@ -35,6 +35,9 @@ export function setStatus(product: Product) {
         else if  (countdown == 0) {
             status = 'Use up today';
         } 
+        else if (countdown == 1) {
+            status = 'Expires in ' + countdown + ' day'
+        } 
         else if (countdown < 5) {
             status = 'Expires in ' + countdown + ' days'
         }

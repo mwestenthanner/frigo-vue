@@ -60,21 +60,20 @@ async function deleteItem(listItemId: string) {
 </script>
 
 <style scoped>
-
-.container {
-    padding: 2rem;
-}
-
-.mobile {
-    padding: 1rem 2rem;
-}
-
 .shopping-item {
     border-bottom: 1px solid var(--font-accent);
     padding: 1rem;
     display: flex;
     align-items: center;
     justify-content: space-between;
+}
+
+.mobile .shopping-item {
+    padding: 0.7rem;
+} 
+
+.mobile button {
+    padding: 0.5rem;
 }
 
 label {

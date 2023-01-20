@@ -1,8 +1,8 @@
 <template>
   <div class="app">
-    <Sidebar class="desktop" />
+    <Sidebar class="desktop-sidebar" />
+    <HeaderBar />
     <main>
-      <HeaderBar />
       <router-view />
     </main>
     <MobileNav class="mobile"></MobileNav>
@@ -29,13 +29,17 @@ onBeforeMount(async () => {
 
 <style>
 
+main {
+  padding: 0 2rem;
+}
+
 /* Phone */
 @media screen and (max-width: 599px) {
   .mobile {
     display: block;
   }
 
-  .desktop {
+  .desktop-sidebar {
     display: none !important;
   }
 }
@@ -44,13 +48,21 @@ onBeforeMount(async () => {
   .app {
     display: grid;
     grid-template-columns: 15% 1fr;
+    grid-template-rows: 15% 1fr;
+    grid-template-areas:
+      "sidebar header"
+      "sidebar main";
   }
+
+  .desktop-sidebar {
+    grid-area: sidebar;
+  } 
 
   .mobile {
     display: none !important;
   }
 
-  .desktop {
+  .desktop-sidebar {
     display: block;
   }
 }
