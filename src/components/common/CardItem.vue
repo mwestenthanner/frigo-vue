@@ -4,7 +4,7 @@
             <img :src="recipe.img" :alt="recipe.name">
         </div>
         <div class="text-wrapper">
-            <h3>{{ recipe.name }}</h3>
+            <h4 class="recipe-title">{{ recipe.name }}</h4>
             <div class="recipe-tags">
                 <span class="tag" v-for="tag in recipe.categories" :key="tag">{{ tag }}</span>
             </div>
@@ -24,15 +24,16 @@ const props = defineProps<{
 
 .recipe-card {
     max-width: 25rem;
-    box-shadow: 0px 0px 13px 0px rgba(0,0,0,0.2);
-    border-radius: 10px;
+    border-radius: 1rem;
+    border: 1px solid var(--font-accent);
 }
 
 .image-wrapper {
-    aspect-ratio: 16 / 9;
+    aspect-ratio: 1 / 1;
     position: relative;
     overflow: hidden;
-    border-radius: 10px 10px 0 0;
+    border-radius: 1rem;
+    margin: 5px;
 }
 
 .image-wrapper > img {
@@ -47,21 +48,26 @@ const props = defineProps<{
 }
 
 .text-wrapper {
-    padding: 1rem 1rem 1rem 1.5rem;
+    padding: 0.5rem 1rem 1.5rem 1rem;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
 }
 
+.recipe-title {
+    font-size: 100%;
+}
+
 .recipe-tags {
-    margin: 1rem 0 1rem 0;
+    margin-top: 1rem;
+    font-size: 80%;
 }
 
 .tag {
     padding: 7px 10px 7px 10px;
     border-radius: 8px;
-    color: white;
-    background-color: var(--yellow);
+    color: var(--font-main);
+    background-color: var(--accent-primary);
     text-align: center;
     font-size: 90%;
 }

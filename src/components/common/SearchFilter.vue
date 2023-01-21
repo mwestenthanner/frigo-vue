@@ -43,6 +43,7 @@ svg > circle, svg > line {
     font-family: Inter;
     font-size: 100%;
     color: var(--font-accent);
+    width: 100%;
 }
 
 #search:focus {

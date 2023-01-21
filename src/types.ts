@@ -23,7 +23,7 @@ export interface Recipe {
     categories: Array<string>
     ingredients: Array<string>
     instructions: Array<string>
-    nutritionalValue?: Array<KeyValuePair>
+    // nutritionalValue?: Array<KeyValuePair>
 }
 
 export interface Location {
