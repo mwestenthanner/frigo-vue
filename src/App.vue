@@ -17,20 +17,23 @@ import MobileNav from './components/common/MobileNav.vue'
 
 import { useLocationStore } from '@/stores/locations';
 import { useProductStore } from './stores/products';
+import { useRecipeStore } from './stores/recipes';
 
 const locations = useLocationStore();
 const products = useProductStore();
+const recipes = useRecipeStore();
 
 onBeforeMount(async () => {
   await locations.setLocations();
   await products.setProducts();
+  await recipes.setRecipes();
 })
 </script>
 
 <style>
 
 main {
-  padding: 0 2rem;
+  padding: 2rem 2rem 0 2rem;
 }
 
 /* Phone */

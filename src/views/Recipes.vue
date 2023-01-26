@@ -21,29 +21,22 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue';
-import type { Recipe } from '@/types';
+import { onBeforeMount, ref } from 'vue';
 import Multiselect from '@vueform/multiselect'
 import CardItem from '@/components/common/CardItem.vue';
 import SearchFilter from '@/components/common/SearchFilter.vue';
+import { useRecipeStore } from '@/stores/recipes';
+import { storeToRefs } from 'pinia';
 
 const showFilters = ref(false);
 const categoryFilter = ref();
 
-const recipes = [
-    {
-        name: 'Mochi mit Eiscremefüllung',
-        description: 'Ein süßer japanischer Reiskuchen.',
-        categories: ['Dessert', 'Vegan'],
-        img: 'https://images.unsplash.com/photo-1635355347994-b79177b77e5c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MXx8bW9jaGl8ZW58MHx8MHx8&auto=format&fit=crop&w=700&q=60'
-    } as Recipe,
-    {
-        name: 'Spaghetti Carbonara',
-        description: 'Ein leckeres Pastagericht mit Eiern und Speck.',
-        categories: ['Pasta'],
-        img: 'https://images.unsplash.com/photo-1579631542720-3a87824fff86?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8c3BhZ2hldHRpJTIwY2FyYm9uYXJhfGVufDB8fDB8fA%3D%3D&auto=format&fit=crop&w=700&q=60'
-    } as Recipe,
-]
+const store = useRecipeStore();
+const { recipes } = storeToRefs(store);
+
+onBeforeMount(async () => {
+    await store.setRecipes();
+})
 </script>
 
 <style scoped>
@@ -67,7 +60,8 @@ const recipes = [
 
 .recipe-cards {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    grid-gap: 1rem;
+    grid-template-columns: repeat(2, calc(50% - 0.75rem));
+    grid-gap: 1.5rem;
+    margin-top: 1.5rem;
 }
 </style>

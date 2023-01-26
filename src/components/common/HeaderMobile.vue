@@ -1,5 +1,5 @@
 <template>
-    <header>
+    <header v-if="route.path == '/'">
         <router-link to="/">
             <img class="logo" src="../../assets/frigo-icon-dark.svg" alt="Frigo - grocery management">
         </router-link>
@@ -8,15 +8,20 @@
 </template>
 
 <script lang="ts" setup>
+import { useRoute } from 'vue-router';
+
 const props = defineProps<{
   heading: String
 }>()
+
+const route = useRoute();
+console.log(route.path)
 </script>
 
 <style scoped>
 header {
     max-height: 10vh;
-    padding: 3rem 2rem 2rem 2rem;
+    padding: 3rem 2rem 0 2rem;
     display: flex;
     justify-content: space-between;
 }

@@ -21,9 +21,8 @@ export interface Recipe {
     description: string
     img: string
     categories: Array<string>
-    ingredients: Array<string>
-    instructions: Array<string>
-    // nutritionalValue?: Array<KeyValuePair>
+    ingredients: Array<{ quantity: string, unit: string, ingr: string }>
+    instructions: Array<{ step: number, instr: string }>
 }
 
 export interface Location {

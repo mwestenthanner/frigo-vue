@@ -1,14 +1,16 @@
 <template>
     <div class="recipe-card">
+        <router-link :to="'/recipe/' + recipe.id">
         <div class="image-wrapper">
             <img :src="recipe.img" :alt="recipe.name">
         </div>
         <div class="text-wrapper">
             <h4 class="recipe-title">{{ recipe.name }}</h4>
             <div class="recipe-tags">
-                <span class="tag" v-for="tag in recipe.categories" :key="tag">{{ tag }}</span>
+                <span class="tag" v-for="(tag, index) in recipe.categories" :key="tag">{{ tag }}<span v-if="index < recipe.categories.length - 1">, </span></span>
             </div>
         </div>
+        </router-link>
     </div>
 </template>
 
@@ -25,7 +27,6 @@ const props = defineProps<{
 .recipe-card {
     max-width: 25rem;
     border-radius: 1rem;
-    border: 1px solid var(--font-accent);
 }
 
 .image-wrapper {
@@ -33,7 +34,6 @@ const props = defineProps<{
     position: relative;
     overflow: hidden;
     border-radius: 1rem;
-    margin: 5px;
 }
 
 .image-wrapper > img {
@@ -48,7 +48,7 @@ const props = defineProps<{
 }
 
 .text-wrapper {
-    padding: 0.5rem 1rem 1.5rem 1rem;
+    padding: 1rem 0 0 0;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -56,23 +56,11 @@ const props = defineProps<{
 
 .recipe-title {
     font-size: 100%;
+    line-height: 1.15;
 }
 
 .recipe-tags {
-    margin-top: 1rem;
-    font-size: 80%;
-}
-
-.tag {
-    padding: 7px 10px 7px 10px;
-    border-radius: 8px;
-    color: var(--font-main);
-    background-color: var(--accent-primary);
-    text-align: center;
-    font-size: 90%;
-}
-
-.tag:not(:first-child) {
-    margin-left: 0.5rem;
+    padding-top: 0.5rem;
+    font-size: 70%;
 }
 </style>

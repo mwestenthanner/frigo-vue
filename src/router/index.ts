@@ -5,6 +5,7 @@ import Pantry from '@/views/Stock.vue'
 import ShoppingList from '@/views/ShoppingList.vue'
 import Recipes from '@/views/Recipes.vue'
 import MealPlan from '@/views/MealPlan.vue'
+import SingleRecipe from '@/views/SingleRecipe.vue'
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -26,6 +27,11 @@ const routes: Array<RouteRecordRaw> = [
     path: '/recipes',
     name: 'Recipes',
     component: Recipes
+  },
+  {
+    path: '/recipe/:id',
+    name: 'Recipe',
+    component: SingleRecipe
   },
   {
     path: '/meal-plan',
