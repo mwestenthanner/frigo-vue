@@ -1,21 +1,10 @@
 # frigo-vue
 
-This template should help get you started developing with Vue 3 in Vite.
+Frigo is a Vue SPA, designed to work with the [Frigo backend](https://github.com/mwestenthanner/frigo-server) for users to track their groceries at home, shopping list and recipe archive.
 
-## Recommended IDE Setup
+It is loosely inspired by the FOSS project Grocy, but aims to be a lot more simplified.
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
-
-## Type Support for `.vue` Imports in TS
-
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin) to make the TypeScript language service aware of `.vue` types.
-
-If the standalone TypeScript plugin doesn't feel fast enough to you, Volar has also implemented a [Take Over Mode](https://github.com/johnsoncodehk/volar/discussions/471#discussioncomment-1361669) that is more performant. You can enable it by the following steps:
-
-1. Disable the built-in TypeScript Extension
-    1) Run `Extensions: Show Built-in Extensions` from VSCode's command palette
-    2) Find `TypeScript and JavaScript Language Features`, right click and select `Disable (Workspace)`
-2. Reload the VSCode window by running `Developer: Reload Window` from the command palette.
+![frigo-preview](https://user-images.githubusercontent.com/38504186/221493842-867f41f9-1a82-4e29-a895-ecf7d101038e.png)
 
 ## Customize configuration
 
